@@ -140,7 +140,7 @@ func (doc *Document) createPDF() (*bytes.Buffer, error) {
 		// we will use xvfb to temporily solve no display problem
 		errbuf.Reset()
 		args = append([]string {Executable_Wkhtmltopdf}, args...)
-		cmd = exec.Command(Executable_Xvfb, args...)
+		cmd := exec.Command(Executable_Xvfb, args...)
 		cmd.Stdin = stdin
 		cmd.Stdout = buf
 		cmd.Stderr = errbuf
