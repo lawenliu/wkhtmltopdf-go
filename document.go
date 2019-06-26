@@ -125,9 +125,9 @@ func (doc *Document) createPDF() (*bytes.Buffer, error) {
 
 	buffer := new(bytes.Buffer)
 	buffer.ReadFrom(stdin)
-	buf, err := CreatePDFNormal(buffer)
+	buf, err := doc.createPDFNormal(buffer)
 	if err != nil {
-		buf, err = CreatePDFXvfb(buffer)
+		buf, err = doc.createPDFXvfb(buffer)
 		if err != nil {
 			return nil, err
 		}
@@ -141,7 +141,7 @@ func (doc *Document) createPDF() (*bytes.Buffer, error) {
 }
 
 // CreatePDFXvfb create with xvfb to start wkhtmltopdf to avoid headless (without display)
-func (doc *Document) CreatePDFXvfb(buffer *bytes.Buffer) (*bytes.Buffer, error) {
+func (doc *Document) createPDFXvfb(buffer *bytes.Buffer) (*bytes.Buffer, error) {
 	stdin := bytes.NewReader(buffer.Bytes())
 	args := append(doc.args(), "-")
 	buf := &bytes.Buffer{}
@@ -161,7 +161,7 @@ func (doc *Document) CreatePDFXvfb(buffer *bytes.Buffer) (*bytes.Buffer, error) 
 }
 
 // CreatePDFNormal create with wkhtmltopdf directly
-func (doc *Document) CreatePDFNormal(buffer *bytes.Buffer) (*bytes.Buffer, error) {
+func (doc *Document) createPDFNormal(buffer *bytes.Buffer) (*bytes.Buffer, error) {
 	stdin := bytes.NewReader(buffer.Bytes())
 	args := append(doc.args(), "-")
 	buf := &bytes.Buffer{}
