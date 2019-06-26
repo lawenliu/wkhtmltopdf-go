@@ -143,6 +143,7 @@ func (doc *Document) createPDF() (*bytes.Buffer, error) {
 		cmd.Stdout = buf
 		cmd.Stderr = errbuf
 		err = cmd.Run()
+                return nil, fmt.Errorf("Error running wkhtmltopdf: %v, %+v", errbuf.String(), cmd)
 		if err != nil {
 			return nil, fmt.Errorf("Error running wkhtmltopdf: %v, %+v", errbuf.String(), cmd)
 		}
