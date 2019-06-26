@@ -123,39 +123,60 @@ func (doc *Document) createPDF() (*bytes.Buffer, error) {
 		}
 	}
 
-	args := append(doc.args(), "-")
-
-	buf := &bytes.Buffer{}
-	errbuf := &bytes.Buffer{}
-
-	//cmd := exec.Command(Executable_Wkhtmltopdf, args...)
-	//cmd.Stdin = stdin
-	//cmd.Stdout = buf
-	//cmd.Stderr = errbuf
-
-	//err := cmd.Run()
-        //return nil, fmt.Errorf("First: Error running wkhtmltopdf: %v, %+v", errbuf.String(), cmd)
-	//if err != nil {
-		// when there has no display or no wkhtmltopdf, this will failed
-		// we will use xvfb to temporily solve no display problem
-		errbuf.Reset()
-		args = append([]string {Executable_Wkhtmltopdf}, args...)
-		cmd := exec.Command(Executable_Xvfb, args...)
-		cmd.Stdin = stdin
-		cmd.Stdout = buf
-		cmd.Stderr = errbuf
-		err := cmd.Run()
-                return nil, fmt.Errorf("Second: Error running wkhtmltopdf: %v, %+v", errbuf.String(), cmd)
+	buffer := new(bytes.Buffer)
+	buffer.ReadFrom(stdin)
+	buf, err := CreatePDFNormal(buffer)
+	if err != nil {
+		buf, err = CreatePDFXvfb(buffer)
 		if err != nil {
-			return nil, fmt.Errorf("Error running wkhtmltopdf: %v, %+v", errbuf.String(), cmd)
+			return nil, err
 		}
-	//}
+	}
 
 	if doc.tmp != "" {
 		err = os.RemoveAll(TempDir + "/" + doc.tmp)
 	}
 	return buf, err
 
+}
+
+// CreatePDFXvfb create with xvfb to start wkhtmltopdf to avoid headless (without display)
+func (doc *Document) CreatePDFXvfb(buffer *bytes.Buffer) (*bytes.Buffer, error) {
+	stdin := bytes.NewReader(buffer.Bytes())
+	args := append(doc.args(), "-")
+	buf := &bytes.Buffer{}
+	errbuf := &bytes.Buffer{}
+	args = append([]string {Executable_Wkhtmltopdf}, args...)
+	cmd := exec.Command(Executable_Xvfb, args...)
+	cmd.Stdin = stdin
+	cmd.Stdout = buf
+	cmd.Stderr = errbuf
+
+	err := cmd.Run()
+	if err != nil {
+        	return nil, fmt.Errorf("First: Error running wkhtmltopdf: %v", errbuf.String())
+	}
+	
+	return buf, nil
+}
+
+// CreatePDFNormal create with wkhtmltopdf directly
+func (doc *Document) CreatePDFNormal(buffer *bytes.Buffer) (*bytes.Buffer, error) {
+	stdin := bytes.NewReader(buffer.Bytes())
+	args := append(doc.args(), "-")
+	buf := &bytes.Buffer{}
+	errbuf := &bytes.Buffer{}
+	cmd := exec.Command(Executable_Wkhtmltopdf, args...)
+	cmd.Stdin = stdin
+	cmd.Stdout = buf
+	cmd.Stderr = errbuf
+
+	err := cmd.Run()
+	if err != nil {
+        	return nil, fmt.Errorf("First: Error running wkhtmltopdf: %v", errbuf.String())
+	}
+	
+	return buf, nil
 }
 
 // WriteToFile creates the pdf document and writes it
