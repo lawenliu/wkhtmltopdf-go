@@ -61,7 +61,10 @@ var (
 
 	// Executable is the command to run wkhtmltopdf. If wkhtmltopdf
 	// cannot be found on your path, amend this to its location.
-	Executable = "wkhtmltopdf"
+	// Executable = "wkhtmltopdf"
+	
+	// Enabled for debian without display, we have to use xvfb to start wkhtmltopdf
+	Executable = "xvfb wkhtmltopdf"
 
 	// TempDir is where the directories for creating temporary
 	// files are created.
