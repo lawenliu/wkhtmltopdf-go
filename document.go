@@ -123,12 +123,11 @@ func (doc *Document) createPDF() (*bytes.Buffer, error) {
 		}
 	}
 
-	if stdin == nil {
-		return nil, fmt.Errorf("First: Error running wkhtmltopdf: %v", stdin)
+	buffer := new(bytes.Buffer)
+	if stdin != nil {
+		buffer.ReadFrom(stdin)
 	}
 	
-	buffer := new(bytes.Buffer)
-	buffer.ReadFrom(stdin)
 	buf, err := doc.createPDFNormal(buffer)
 	if err != nil {
 		buf, err = doc.createPDFXvfb(buffer)
