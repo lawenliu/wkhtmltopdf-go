@@ -1,4 +1,4 @@
-package wkhtmltopdf_test
+package wkhtmltopdf
 
 import (
 	"bytes"
@@ -7,8 +7,6 @@ import (
 	"os"
 	"strings"
 	"testing"
-
-	"github.com/andrewcharlton/wkhtmltopdf-go"
 )
 
 func TestWriteToFile(t *testing.T) {
@@ -26,9 +24,9 @@ func TestWriteToFile(t *testing.T) {
 
 	for _, tc := range testcases {
 
-		doc := wkhtmltopdf.NewDocument()
+		doc := NewDocument()
 		for _, pg := range tc.Pages {
-			doc.AddPages(wkhtmltopdf.NewPage(pg))
+			doc.AddPages(NewPage(pg))
 		}
 		err := doc.WriteToFile(tc.Filename)
 		switch {
@@ -63,9 +61,9 @@ func TestWriteToReader(t *testing.T) {
 
 	for _, tc := range testcases {
 
-		doc := wkhtmltopdf.NewDocument()
+		doc := NewDocument()
 		for _, pg := range tc.Pages {
-			doc.AddPages(wkhtmltopdf.NewPage(pg))
+			doc.AddPages(NewPage(pg))
 		}
 		err := doc.Write(tc.Writer)
 		switch {
@@ -90,12 +88,12 @@ func TestWriteFromReader(t *testing.T) {
 	buf.ReadFrom(f)
 	f.Close()
 
-	pg, err := wkhtmltopdf.NewPageReader(buf)
+	pg, err := NewPageReader(buf)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	doc := wkhtmltopdf.NewDocument()
+	doc := NewDocument()
 	doc.AddPages(pg)
 
 	output := &bytes.Buffer{}
@@ -107,7 +105,7 @@ func TestWriteFromReader(t *testing.T) {
 
 func TestMultipleReaders(t *testing.T) {
 
-	pages := []*wkhtmltopdf.Page{}
+	pages := []*Page{}
 	for n := 0; n < 5; n++ {
 		f, err := os.Open("test_data/simple.html")
 		if err != nil {
@@ -118,7 +116,7 @@ func TestMultipleReaders(t *testing.T) {
 		buf.ReadFrom(f)
 		f.Close()
 
-		pg, err := wkhtmltopdf.NewPageReader(buf)
+		pg, err := NewPageReader(buf)
 		if err != nil {
 			t.Errorf("Unexpected error: %v", err)
 		}
@@ -126,7 +124,7 @@ func TestMultipleReaders(t *testing.T) {
 		pages = append(pages, pg)
 	}
 
-	doc := wkhtmltopdf.NewDocument()
+	doc := NewDocument()
 	doc.AddCover(pages[0])
 	doc.AddPages(pages[1:]...)
 

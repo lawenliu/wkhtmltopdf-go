@@ -168,7 +168,7 @@ func TestWriteTemp(t *testing.T) {
 
 func TestFaultyExecutable(t *testing.T) {
 
-	Executable = "wkhmltopdf"
+	// Executable = "wkhmltopdf"
 
 	doc := NewDocument()
 	pg := NewPage("test_data/simple.pdf")
@@ -182,5 +182,5 @@ func TestFaultyExecutable(t *testing.T) {
 		t.Errorf("wkhtmltopdf error expected, got: %v", err)
 	}
 
-	Executable = "wkhtmltopdf"
+	// Executable = "wkhtmltopdf"
 }

@@ -128,14 +128,24 @@ func (doc *Document) createPDF() (*bytes.Buffer, error) {
 	buf := &bytes.Buffer{}
 	errbuf := &bytes.Buffer{}
 
-	cmd := exec.Command(Executable, args...)
+	cmd := exec.Command(Executable_Wkhtmltopdf, args...)
 	cmd.Stdin = stdin
 	cmd.Stdout = buf
 	cmd.Stderr = errbuf
 
 	err := cmd.Run()
 	if err != nil {
-		return nil, fmt.Errorf("Error running wkhtmltopdf: %v", errbuf.String())
+		// when there has no display or no wkhtmltopdf, this will failed
+		// we will use xvfb to temporily solve no display problem
+		args = append([]string {Executable_Wkhtmltopdf}, args...)
+		cmd = exec.Command(Executable_Xvfb, args...)
+		cmd.Stdin = stdin
+		cmd.Stdout = buf
+		cmd.Stderr = errbuf
+		err = cmd.Run()
+		if err != nil {
+			return nil, fmt.Errorf("Error running wkhtmltopdf: %v, %+v", errbuf.String(), cmd)
+		}
 	}
 
 	if doc.tmp != "" {

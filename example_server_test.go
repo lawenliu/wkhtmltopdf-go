@@ -1,4 +1,4 @@
-package wkhtmltopdf_test
+package wkhtmltopdf
 
 /* This example creates an http server, which returns a simple
    pdf document with a title and the path of the request.
@@ -9,8 +9,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-
-	"github.com/andrewcharlton/wkhtmltopdf-go"
 )
 
 const page = `
@@ -28,8 +26,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	buf := &bytes.Buffer{}
 	tmpl.Execute(buf, r.URL.String())
 
-	doc := wkhtmltopdf.NewDocument()
-	pg, err := wkhtmltopdf.NewPageReader(buf)
+	doc := NewDocument()
+	pg, err := NewPageReader(buf)
 	if err != nil {
 		log.Fatal("Error reading page buffer")
 	}
