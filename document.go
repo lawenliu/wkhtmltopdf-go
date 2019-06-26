@@ -135,7 +135,7 @@ func (doc *Document) createPDF() (*bytes.Buffer, error) {
 
 	//err := cmd.Run()
         //return nil, fmt.Errorf("First: Error running wkhtmltopdf: %v, %+v", errbuf.String(), cmd)
-	if err != nil {
+	//if err != nil {
 		// when there has no display or no wkhtmltopdf, this will failed
 		// we will use xvfb to temporily solve no display problem
 		errbuf.Reset()
@@ -149,7 +149,7 @@ func (doc *Document) createPDF() (*bytes.Buffer, error) {
 		if err != nil {
 			return nil, fmt.Errorf("Error running wkhtmltopdf: %v, %+v", errbuf.String(), cmd)
 		}
-	}
+	//}
 
 	if doc.tmp != "" {
 		err = os.RemoveAll(TempDir + "/" + doc.tmp)
