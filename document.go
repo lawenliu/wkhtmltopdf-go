@@ -99,7 +99,7 @@ func (doc *Document) writeTempPages() error {
 
 // createPDF creates the pdf and writes it to the buffer,
 // which can then be written to file or writer.
-func (doc *Document) createPDF() (*bytes.Buffer, error) {
+func (doc *Document) createPDF(useXvfbDirect bool) (*bytes.Buffer, error) {
 
 	var stdin io.Reader
 	switch {
@@ -127,12 +127,21 @@ func (doc *Document) createPDF() (*bytes.Buffer, error) {
 	if stdin != nil {
 		buffer.ReadFrom(stdin)
 	}
-	
-	buf, err := doc.createPDFNormal(buffer)
-	if err != nil {
+
+	var buf = &bytes.Buffer{}
+	var err error
+	if useXvfbDirect {
 		buf, err = doc.createPDFXvfb(buffer)
 		if err != nil {
 			return nil, err
+		}
+	} else {
+		buf, err = doc.createPDFNormal(buffer)
+		if err != nil {
+			buf, err = doc.createPDFXvfb(buffer)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -184,9 +193,9 @@ func (doc *Document) createPDFNormal(buffer *bytes.Buffer) (*bytes.Buffer, error
 
 // WriteToFile creates the pdf document and writes it
 // to the specified filename.
-func (doc *Document) WriteToFile(filename string) error {
+func (doc *Document) WriteToFile(filename string, useXvfbDirect bool) error {
 
-	buf, err := doc.createPDF()
+	buf, err := doc.createPDF(useXvfbDirect)
 	if err != nil {
 		return err
 	}
@@ -201,9 +210,9 @@ func (doc *Document) WriteToFile(filename string) error {
 
 // Write creates the pdf document and writes it
 // to the provided reader.
-func (doc *Document) Write(w io.Writer) error {
+func (doc *Document) Write(w io.Writer, useXvfbDirect bool) error {
 
-	buf, err := doc.createPDF()
+	buf, err := doc.createPDF(useXvfbDirect)
 	if err != nil {
 		return err
 	}

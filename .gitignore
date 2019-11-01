@@ -3,3 +3,6 @@ test_data/*.pdf
 
 # Temporary generated fils
 temp*
+
+# IDE
+.idea/

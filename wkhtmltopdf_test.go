@@ -28,7 +28,7 @@ func TestWriteToFile(t *testing.T) {
 		for _, pg := range tc.Pages {
 			doc.AddPages(NewPage(pg))
 		}
-		err := doc.WriteToFile(tc.Filename)
+		err := doc.WriteToFile(tc.Filename, false)
 		switch {
 		case err == nil && tc.Err != "":
 			t.Errorf("%v. Wrong error produced. Expected: %v, Got: %v", tc.Case, tc.Err, err)
@@ -65,7 +65,7 @@ func TestWriteToReader(t *testing.T) {
 		for _, pg := range tc.Pages {
 			doc.AddPages(NewPage(pg))
 		}
-		err := doc.Write(tc.Writer)
+		err := doc.Write(tc.Writer, false)
 		switch {
 		case err == nil && tc.Err != "":
 			t.Errorf("%v. Wrong error produced. Expected: %v, Got: %v", tc.Case, tc.Err, err)
@@ -97,7 +97,7 @@ func TestWriteFromReader(t *testing.T) {
 	doc.AddPages(pg)
 
 	output := &bytes.Buffer{}
-	err = doc.Write(output)
+	err = doc.Write(output, false)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
@@ -129,7 +129,7 @@ func TestMultipleReaders(t *testing.T) {
 	doc.AddPages(pages[1:]...)
 
 	output := &bytes.Buffer{}
-	err := doc.Write(output)
+	err := doc.Write(output, false)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
