@@ -119,7 +119,7 @@ func TestFaultyTempDir(t *testing.T) {
 	pg2, _ := NewPageReader(bytes.NewBufferString("test2"))
 	doc.AddPages(pg1, pg2)
 
-	_, err := doc.createPDF()
+	_, err := doc.createPDF(true)
 	if err == nil {
 		t.Errorf("Error expected, got nil")
 	} else if !strings.HasPrefix(err.Error(), "Error writing temp files") {
@@ -175,7 +175,7 @@ func TestFaultyExecutable(t *testing.T) {
 	doc.AddPages(pg)
 
 	buf := &bytes.Buffer{}
-	err := doc.Write(buf)
+	err := doc.Write(buf, false)
 	if err == nil {
 		t.Errorf("Error expected, got nil")
 	} else if !strings.HasPrefix(err.Error(), "Error running wkhtmltopdf") {

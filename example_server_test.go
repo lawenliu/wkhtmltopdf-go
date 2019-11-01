@@ -35,7 +35,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/pdf")
 	w.Header().Set("Content-Disposition", `attachment; filename="test.pdf"`)
-	err = doc.Write(w)
+	err = doc.Write(w, false)
 	if err != nil {
 		log.Fatal("Error serving pdf")
 	}
